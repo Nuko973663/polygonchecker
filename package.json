@@ -1,0 +1,23 @@
+{
+  "name": "polygonchecker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nuko973663/polygonchecker.git"
+  },
+  "author": "nuko973663",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nuko973663/polygonchecker/issues"
+  },
+  "homepage": "https://github.com/Nuko973663/polygonchecker#readme",
+  "dependencies": {
+    "csv-write-stream": "^2.0.0",
+    "web3": "^1.5.2"
+  }
+}

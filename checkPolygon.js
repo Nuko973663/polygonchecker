@@ -7,7 +7,6 @@ const numberOfChecks = 60 * 24 * 7;
 const rpc_url = "https://polygon-rpc.com/";
 //const rpc_url = "https://rpc-mainnet.matic.network/";
 const accountJson = "account.json";
-const logFile = "log.csv";
 const Web3 = require("web3");
 const fs = require("fs");
 
@@ -31,6 +30,10 @@ const main = () => {
 
   const checkPolygon = () => {
     const csvWriter = require("csv-write-stream");
+
+    let logFile = rpc_url.replace("https://", "").replace("/", "") + ".csv";
+    //console.log(logFile);
+
     let writer = null;
     if (!fs.existsSync(logFile))
       writer = csvWriter({
