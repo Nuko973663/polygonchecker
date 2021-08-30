@@ -6,9 +6,22 @@ const intervalInSeconds = 60;
 const numberOfChecks = 60 * 24 * 7;
 const rpc_url = "https://polygon-rpc.com/";
 //const rpc_url = "https://rpc-mainnet.matic.network/";
-const accountJson = "account.json";
+const accountJson = "accounts.json";
 const Web3 = require("web3");
 const fs = require("fs");
+const iAccount = 0;
+
+const settings = [
+  { rpcURL: "https://polygon-rpc.com/", gasMultiplier: 1 },
+  { rpcURL: "https://polygon-rpc.com/", gasMultiplier: 2 },
+  { rpcURL: "https://rpc-mainnet.matic.network/", gasMultiplier: 1 },
+  {
+    rpcURL:
+      "https://speedy-nodes-nyc.moralis.io/5cca42446a130049e1a9c55b/polygon/mainnet",
+    gasMultiplier: 1,
+  },
+  { rpcURL: "https://polygon-rpc.com/", gasMultiplier: 1 },
+];
 
 /**
  * Main Function
@@ -16,13 +29,15 @@ const fs = require("fs");
 const main = () => {
   let count = 0;
 
-  let json = JSON.parse(fs.readFileSync(accountJson, "utf-8"));
+  let accounts = JSON.parse(fs.readFileSync(accountJson, "utf-8"));
   let web3 = new Web3(new Web3.providers.HttpProvider(rpc_url));
 
-  let ac = web3.eth.accounts.privateKeyToAccount(json["privateKey"]);
-  web3.eth.accounts.wallet.add(ac);
+  accounts.forEach((element) => {
+    let ac = web3.eth.accounts.privateKeyToAccount(element["privateKey"]);
+    web3.eth.accounts.wallet.add(ac);
+  });
 
-  let address = web3.eth.accounts.wallet[0].address;
+  let address = web3.eth.accounts.wallet[iAccount].address;
 
   let csvWriter = require("csv-write-stream");
 
@@ -31,8 +46,7 @@ const main = () => {
   const checkPolygon = () => {
     const csvWriter = require("csv-write-stream");
 
-    let logFile = rpc_url.replace("https://", "").replace("/", "") + ".csv";
-    //console.log(logFile);
+    let logFile = rpc_url.replace("https://", "").replace(/\//g, "") + ".csv";
 
     let writer = null;
     if (!fs.existsSync(logFile))
