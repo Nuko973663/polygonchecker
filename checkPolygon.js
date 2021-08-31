@@ -2,14 +2,12 @@
  * @author @Nuko973663
  */
 "use strict";
-const intervalInSeconds = 60;
-const numberOfChecks = 60 * 24 * 7;
-const rpc_url = "https://polygon-rpc.com/";
-//const rpc_url = "https://rpc-mainnet.matic.network/";
+const intervalInSeconds = 1;
+const numberOfChecks = 1; //60 * 24 * 7;
+
 const accountJson = "accounts.json";
 const Web3 = require("web3");
 const fs = require("fs");
-const iAccount = 0;
 
 const settings = [
   { rpcURL: "https://polygon-rpc.com/", gasMultiplier: 1 },
@@ -28,6 +26,17 @@ const settings = [
  */
 const main = () => {
   let count = 0;
+  let iAccount;
+  let gasMultiplier;
+  let rpc_url;
+  if (process.argv.length > 2) {
+    iAccount = parseInt(process.argv[2]);
+  } else {
+    iAccount = 0;
+  }
+
+  rpc_url = settings[iAccount]["rpcURL"];
+  gasMultiplier = settings[iAccount]["gasMultiplier"];
 
   let accounts = JSON.parse(fs.readFileSync(accountJson, "utf-8"));
   let web3 = new Web3(new Web3.providers.HttpProvider(rpc_url));
@@ -39,14 +48,16 @@ const main = () => {
 
   let address = web3.eth.accounts.wallet[iAccount].address;
 
-  let csvWriter = require("csv-write-stream");
-
   console.log("Starting PolygonChecker using " + address);
 
   const checkPolygon = () => {
     const csvWriter = require("csv-write-stream");
 
-    let logFile = rpc_url.replace("https://", "").replace(/\//g, "") + ".csv";
+    let logFile =
+      rpc_url.replace("https://", "").replace(/\//g, "") +
+      "gasX" +
+      gasMultiplier +
+      ".csv";
 
     let writer = null;
     if (!fs.existsSync(logFile))
@@ -58,10 +69,11 @@ const main = () => {
     count++;
 
     web3.eth.getGasPrice().then((gasPrice) => {
+      let gas = parseInt(gasPrice) * gasMultiplier;
       let start = Date.now();
       let record = {
         start: String(start),
-        gas: String(gasPrice),
+        gas: String(gas),
         tx: "",
         txid: "",
         receipt: "",
@@ -72,7 +84,7 @@ const main = () => {
           from: address,
           to: address,
           value: "1",
-          gas: gasPrice,
+          gas: String(gas),
           gasLimit: 2100000,
         })
         .on("transactionHash", (hash) => {
