@@ -2,8 +2,8 @@
  * @author @Nuko973663
  */
 "use strict";
-const intervalInSeconds = 1;
-const numberOfChecks = 1; //60 * 24 * 7;
+const intervalInSeconds = 60;
+const numberOfChecks = 60 * 24 * 7;
 
 const accountJson = "accounts.json";
 const Web3 = require("web3");
